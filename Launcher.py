@@ -10,5 +10,6 @@ init()
 while True:
 
     payload = getrandpayload()
-    pub(payload)
+    for x in range(1,17):
+        pub(str(x),payload)
     time.sleep(2)
