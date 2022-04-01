@@ -4,7 +4,7 @@ import uuid
 import json
 
 zipList = []
-patientCode = ["0", "1", "2", "3", "4", "5", "6"]
+patientCode = ["0", "1"]
 
 def init():
     zipcodesFile = 'kyzipdetails.csv'
@@ -26,7 +26,8 @@ def init():
     #    print(st)
 
 def getrandpayload():
-    count = random.randint(1, 10)
+    #count = random.randint(1, 10)
+    count = 1
     return getpayload(count)
 
 def getpayload(count):
@@ -38,25 +39,30 @@ def getpayload(count):
     return json.dumps(patientList)
 
 
-
 def getperson():
-
+    testing_id = random.randint(1, 10)
     first_name = names.get_first_name()
-    last_name = names.get_last_name()
-    mrn = str(uuid.uuid1())
-    zip_code = random.choice(zipList)
+    #last_name = names.get_last_name()
+    patient_name = names.get_first_name() + ' ' + names.get_last_name()
+    patient_mrn = str(uuid.uuid1())
+    patient_zipcode = random.choice(zipList)
     patient_status_code = random.choice(patientCode)
 
-    #print(first_name)
-    #print(last_name)
-    #print(mrn)
-    #print(zip_code)
-    #print(patient_status_code)
     patientRecord = dict()
-    patientRecord["first_name"] = first_name
-    patientRecord["last_name"] = last_name
-    patientRecord["mrn"] = mrn
-    patientRecord["zip_code"] = zip_code
-    patientRecord["patient_status_code"] = patient_status_code
+    #patientRecord["first_name"] = first_name
+    patientRecord["testing_id"] = testing_id
+    patientRecord["patient_name"] = patient_name
+    patientRecord["patient_mrn"] = patient_mrn
+    patientRecord["patient_zipcode"] = patient_zipcode
+    patientRecord["patient_status"] = patient_status_code
+    patientRecord["contact_list"] = []
+    contact_count = range(random.randint(1, 10))
+    for n in contact_count:
+        patientRecord["contact_list"].append(str(uuid.uuid1()))
+
+    patientRecord["event_list"] = []
+    event_count = range(random.randint(1, 5))
+    for n in event_count:
+        patientRecord["event_list"].append(str(uuid.uuid1()))
 
     return patientRecord

@@ -10,6 +10,7 @@ init()
 while True:
 
     payload = getrandpayload()
-    for x in range(1,17):
-        pub(str(x),payload)
+    #for x in range(1,17):
+    #    pub(str(x),payload)
+    pub("patient_feed", payload)
     time.sleep(2)
