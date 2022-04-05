@@ -1,3 +1,4 @@
+import time
 
 from PayloadGen import getpayload, get_zip
 from Publisher import pub
@@ -22,10 +23,11 @@ text_file = open("vax_data.json", "w")
 n = text_file.write(vax_list)
 text_file.close()
 
+
 '''
 while True:
 
-    patient_list, hospital_list, vax_list = getpayload()
+    patient_list, hospital_list, vax_list = getpayload(zip_map, 10)
 
     for x in range(1,20):
         pub(str(x), patient_list, 'patient_list')
