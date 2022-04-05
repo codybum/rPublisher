@@ -3,15 +3,21 @@ import names
 import uuid
 import json
 
-zipList = []
+zip_map = dict()
 patientCode = ["0", "1"]
 event_master = []
 contact_master = []
-count_number = 20
+patient_list = []
+possitive_patient_list = []
+hospital_list = []
+vax_list = []
 
+count_number = 10
 
-def init():
-    zipcodesFile = 'kyzipdetails.csv'
+def init(count):
+    count_number = count
+
+    zipcodesFile = 'hospitals.csv'
 
     file1 = open(zipcodesFile, 'r')
     kyZipCodes = file1.readlines()
@@ -19,11 +25,12 @@ def init():
     count = 0
     # Strips the newline character
     for zipLine in kyZipCodes:
-        # print(zipLine)
+
         if (count > 0):
             zipLine = zipLine.strip()
             zipSplit = zipLine.split(",")
-            zipList.append(zipSplit[0])
+            zip_map[zipSplit[5]] = zipSplit[0]
+
         count = count + 1
 
     for n in range(random.randint(1, count_number)):
@@ -32,79 +39,79 @@ def init():
     for n in range(random.randint(1, count_number)):
         contact_master.append(str(uuid.uuid1()))
 
-
 def getrandpayload():
     return getpayload()
 
 def getpayload():
-    patientList = []
-    for contact in contact_master:
-        patientList.append(getperson(contact))
 
-    return json.dumps(patientList, indent=4)
+    for contact in contact_master:
+        person = getperson(contact)
+        patient_list.append(person)
+
+        if person["patient_status"] == '1':
+            possitive_patient_list.append(person)
+
+    for patient in possitive_patient_list:
+        hospital_list.append(gethospital(patient))
+
+    for patient in possitive_patient_list:
+        if random.randint(0, 1) == 1:
+            vax_list.append(getvax(patient))
+
+    patient_list_json = json.dumps(patient_list, indent=4)
+    hospital_list_json = json.dumps(hospital_list, indent=4)
+    vax_list_json = json.dumps(vax_list, indent=4)
+
+    event_master.clear()
+    contact_master.clear()
+    patient_list.clear()
+    possitive_patient_list.clear()
+    hospital_list.clear()
+    vax_list.clear()
+
+    return patient_list_json, hospital_list_json, vax_list_json
 
 def getperson(patient_mrn):
     testing_id = random.randint(1, 10)
-    #first_name = names.get_first_name()
-    #last_name = names.get_last_name()
     patient_name = names.get_first_name() + ' ' + names.get_last_name()
-    #patient_mrn = str(uuid.uuid1())
-    patient_zipcode = random.choice(zipList)
+    patient_zipcode = str(random.choice(list(zip_map.items()))[0])
     patient_status_code = random.choice(patientCode)
 
     patientRecord = dict()
-    #patientRecord["first_name"] = first_name
     patientRecord["testing_id"] = testing_id
     patientRecord["patient_name"] = patient_name
     patientRecord["patient_mrn"] = patient_mrn
     patientRecord["patient_zipcode"] = patient_zipcode
     patientRecord["patient_status"] = patient_status_code
     patientRecord["contact_list"] = random.choices(contact_master, k=random.randint(1, count_number/2))
-
-    #contact_count = range(random.randint(1, 10))
-    #for n in contact_count:
-    #    patientRecord["contact_list"].append(str(uuid.uuid1()))
-
-    patientRecord["event_list"] = random.choices(event_master, k=random.randint(1, count_number / 4))
-    #event_count = range(random.randint(1, 5))
-    #for n in event_count:
-    #    patientRecord["event_list"].append(str(uuid.uuid1()))
+    patientRecord["event_list"] = random.choices(event_master, k=random.randint(1, count_number / 2))
 
     return patientRecord
 
+def gethospital(person):
+    hospital_id = zip_map[person['patient_zipcode']]
+    patient_name = person['patient_name']
+    patient_mrn = person['patient_mrn']
+    patient_status = random.randint(1, 3)
 
-def getpayloadOld(count):
+    hospitalRecord = dict()
+    hospitalRecord['hospital_id'] = hospital_id
+    hospitalRecord['patient_name'] = patient_name
+    hospitalRecord['patient_mrn'] = patient_mrn
+    hospitalRecord['patient_status'] = patient_status
 
-    patientList = []
-    for i in range(count):
-        patientList.append(getpersonOld())
+    return hospitalRecord
 
-    return json.dumps(patientList)
 
-def getpersonOld():
-    testing_id = random.randint(1, 10)
-    #first_name = names.get_first_name()
-    #last_name = names.get_last_name()
-    patient_name = names.get_first_name() + ' ' + names.get_last_name()
-    patient_mrn = str(uuid.uuid1())
-    patient_zipcode = random.choice(zipList)
-    patient_status_code = random.choice(patientCode)
+def getvax(person):
 
-    patientRecord = dict()
-    #patientRecord["first_name"] = first_name
-    patientRecord["testing_id"] = testing_id
-    patientRecord["patient_name"] = patient_name
-    patientRecord["patient_mrn"] = patient_mrn
-    patientRecord["patient_zipcode"] = patient_zipcode
-    patientRecord["patient_status"] = patient_status_code
-    patientRecord["contact_list"] = []
-    #contact_count = range(random.randint(1, 10))
-    #for n in contact_count:
-    #    patientRecord["contact_list"].append(str(uuid.uuid1()))
+    vaccination_id = random.randint(1, 10)
+    patient_name = person['patient_name']
+    patient_mrn = person['patient_mrn']
 
-    patientRecord["event_list"] = []
-    #event_count = range(random.randint(1, 5))
-    #for n in event_count:
-    #    patientRecord["event_list"].append(str(uuid.uuid1()))
+    vaxRecord = dict()
+    vaxRecord['vaccination_id'] = vaccination_id
+    vaxRecord['patient_name'] = patient_name
+    vaxRecord['patient_mrn'] = patient_mrn
 
-    return patientRecord
+    return vaxRecord

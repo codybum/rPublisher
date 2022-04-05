@@ -5,16 +5,24 @@ from Publisher import pub
 
 
 
-init()
+init(100)
 
-import json
+#payload = getpayload()
+patient_list, hospital_list, vax_list = getpayload()
 
-payload = getpayload()
-print(payload)
 
-text_file = open("test_data.json", "w")
-n = text_file.write(payload)
+text_file = open("patient_data.json", "w")
+n = text_file.write(patient_list)
 text_file.close()
+
+text_file = open("hospital_data.json", "w")
+n = text_file.write(hospital_list)
+text_file.close()
+
+text_file = open("vax_data.json", "w")
+n = text_file.write(vax_list)
+text_file.close()
+
 
 #with open('test_data.json', 'w') as f:
 #    json.dump(payload, f, indent=4)
