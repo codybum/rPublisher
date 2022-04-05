@@ -3,7 +3,7 @@ import names
 import uuid
 import json
 
-zip_map = dict()
+
 patientCode = ["0", "1"]
 event_master = []
 contact_master = []
@@ -12,11 +12,10 @@ possitive_patient_list = []
 hospital_list = []
 vax_list = []
 
-count_number = 10
 
-def init(count):
-    count_number = count
+def get_zip():
 
+    zip_map = dict()
     zipcodesFile = 'hospitals.csv'
 
     file1 = open(zipcodesFile, 'r')
@@ -33,26 +32,30 @@ def init(count):
 
         count = count + 1
 
-    for n in range(random.randint(1, count_number)):
-        event_master.append(str(uuid.uuid1()))
+    return zip_map
 
-    for n in range(random.randint(1, count_number)):
-        contact_master.append(str(uuid.uuid1()))
 
 def getrandpayload():
     return getpayload()
 
-def getpayload():
+def getpayload(zip_map, count):
+
+    for n in range(random.randint(1, count)):
+        event_master.append(str(uuid.uuid1()))
+
+    for n in range(random.randint(1, count)):
+        contact_master.append(str(uuid.uuid1()))
 
     for contact in contact_master:
-        person = getperson(contact)
+        person = getperson(zip_map, count, contact)
         patient_list.append(person)
 
         if person["patient_status"] == '1':
             possitive_patient_list.append(person)
 
     for patient in possitive_patient_list:
-        hospital_list.append(gethospital(patient))
+        hospital = gethospital(zip_map, patient)
+        hospital_list.append(hospital)
 
     for patient in possitive_patient_list:
         if random.randint(0, 1) == 1:
@@ -71,7 +74,7 @@ def getpayload():
 
     return patient_list_json, hospital_list_json, vax_list_json
 
-def getperson(patient_mrn):
+def getperson(zip_map, count, patient_mrn):
     testing_id = random.randint(1, 10)
     patient_name = names.get_first_name() + ' ' + names.get_last_name()
     patient_zipcode = str(random.choice(list(zip_map.items()))[0])
@@ -83,12 +86,12 @@ def getperson(patient_mrn):
     patientRecord["patient_mrn"] = patient_mrn
     patientRecord["patient_zipcode"] = patient_zipcode
     patientRecord["patient_status"] = patient_status_code
-    patientRecord["contact_list"] = random.choices(contact_master, k=random.randint(1, count_number/2))
-    patientRecord["event_list"] = random.choices(event_master, k=random.randint(1, count_number / 2))
+    patientRecord["contact_list"] = random.choices(contact_master, k=random.randint(1, count/2))
+    patientRecord["event_list"] = random.choices(event_master, k=random.randint(1, count / 2))
 
     return patientRecord
 
-def gethospital(person):
+def gethospital(zip_map, person):
     hospital_id = zip_map[person['patient_zipcode']]
     patient_name = person['patient_name']
     patient_mrn = person['patient_mrn']

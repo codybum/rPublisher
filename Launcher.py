@@ -1,15 +1,14 @@
-import time
 
-from PayloadGen import getpayload, init, getrandpayload
+from PayloadGen import getpayload, get_zip
 from Publisher import pub
 
+#generate initial data
+zip_map = get_zip()
 
 
-init(100)
+#uncomment to create local test files
 
-#payload = getpayload()
-patient_list, hospital_list, vax_list = getpayload()
-
+patient_list, hospital_list, vax_list = getpayload(zip_map, 10)
 
 text_file = open("patient_data.json", "w")
 n = text_file.write(patient_list)
@@ -23,14 +22,15 @@ text_file = open("vax_data.json", "w")
 n = text_file.write(vax_list)
 text_file.close()
 
+'''
+while True:
 
-#with open('test_data.json', 'w') as f:
-#    json.dump(payload, f, indent=4)
+    patient_list, hospital_list, vax_list = getpayload()
 
-#while True:
+    for x in range(1,20):
+        pub(str(x), patient_list, 'patient_list')
+        pub(str(x), hospital_list, 'hospital_list')
+        pub(str(x), patient_list, 'vax_list')
 
-    #payload = getrandpayload()
-    #for x in range(1,17):
-    #    pub(str(x),payload)
-    #pub("patient_feed", payload)
-    #time.sleep(2)
+    time.sleep(5)
+'''
