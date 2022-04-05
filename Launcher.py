@@ -8,7 +8,7 @@ zip_map = get_zip()
 
 #uncomment to create local test files
 
-patient_list, hospital_list, vax_list = getpayload(zip_map, 10)
+patient_list, hospital_list, vax_list = getpayload(zip_map, 100)
 
 text_file = open("patient_data.json", "w")
 n = text_file.write(patient_list)
